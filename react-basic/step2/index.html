@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>리액트 네이티브 바벨 연동</title>
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+<!-- [I] 바벨 연동 (ES2015+ 문법을 사용한 코드를 예전 ES5 자바스크립트 코드로 트랜스 파일링 시키는 도구) -->
+<!-- 최신 문법은 `babel` 사용 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+<!-- [D] 최신 객체 지원은 `babql polyfill` 사용 (여기서는 다루지 않음) -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.6.0/polyfill.min.js"></script>-->
+</head>
+<body>
+<div id="root"></div>
+
+<!-- 스크립트 타입을 `text/babel` 로 선언 -->
+<script type="text/babel">
+'use strict';
+
+class LikeButton extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            liked: false
+        };
+    }
+
+    render() {
+        /** [T] 스텝5 */
+        // babel을 사용하면 HTML 문법처럼 사용 가능하게 하는 JSX(JS + XML) 문법을 사용가능
+        // [D] JSX 문법 주의 사항 (JSX는 결국 스크립트이기 때문에 JS 관련 예약어와 동일한 HTML 속성값은 아래표기값으로 변경해서 사용해야 한다.
+        // class="" -> className=""
+        // for="" -> labelFor=""
+        return (
+            <button
+                type="button"
+                onClick={() => { this.setState({liked: !this.state.liked}); }}
+            >
+                {(this.state.liked) ? 'Liked' : 'Like'}
+            </button>
+        );
+    }
+}
+</script>
+<script type="text/babel">
+'use strict';
+
+/** 싱글 컴포넌트 사용 */
+// ReactDOM.render(
+//     <LikeButton />, // 클래스 컴포넌트 호출
+//     document.querySelector('#root')
+// );
+
+/** 다중 컴포넌트 사용 */
+// 다중 컴포넌트 사용시 무조건 root 엘리먼트가 있어야 한다.
+ReactDOM.render(
+    <div>
+        <LikeButton />
+        <LikeButton />
+        <LikeButton />
+        <LikeButton />
+        <LikeButton />
+    </div>,
+    document.querySelector('#root')
+);
+</script>
+</body>
+</html>

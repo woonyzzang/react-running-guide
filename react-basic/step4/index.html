@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>리액트 네이티브 구구단 예제 (Hooks)</title>
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+'use strict';
+
+/** 함수형 컴포넌트 기본 구조 */
+// setState 나 ref를 사용하지 않으면 함수형 컴포넌트를 사용할 수 있다.
+// const ClassName = () => {
+//     return (<div>Hello, 함수형 컴포넌트</div>);
+// };
+
+/** Hooks */
+// setState 나 ref를 사용할 수 있게 함수형 컴포넌트안에 use...으로 시작하는게 있으면 Hooks 라고 부른다.
+const GuGuDan = () => {
+    // Hooks는 비구조화 할당 문법으로 사용
+    const [first, setFirst] = React.useState(Math.ceil(Math.random() * 9));
+    const [second, setSecond] = React.useState(Math.ceil(Math.random() * 9));
+    const [value, setValue] = React.useState('');
+    const [result, setResult] = React.useState('');
+
+    const inputRef = React.useRef(null); // ref
+
+    const onSubmitForm = (e) => {
+        e.preventDefault();
+
+        if (parseInt(value, 10) === first * second) {
+            // Hooks의 경우 setState가 일어나면 set이 모여진 곳은 한번만 렌더링 된다.
+            // 다행이 이부분은 리액트가 알아서 모아서 처리 함.
+            setFirst(Math.ceil(Math.random() * 9));
+            setSecond(Math.ceil(Math.random() * 9));
+            setValue('');
+            setResult(`${value} 정답 입니다.`);
+            // 클래스 컴포넌트의 seState() 콜백함수 패턴도 사용가능
+            // setResult((prevResult) => {
+            //     return `${value} 정답 입니다.`;
+            // });
+
+            inputRef.current.focus(); // ref 속성으로 선언된 inputRef.current 엘리먼트에 접근
+        } else {
+            setValue('');
+            setResult('오답 입니다.');
+
+            inputRef.current.focus(); // ref 속성으로 선언된 inputRef.current 엘리먼트에 접근
+        }
+    };
+
+    const onChangeInput = (e) => {
+        setValue(e.target.value);
+    };
+
+    // Hooks는 state가 변경 될 때 마다 함수 자체 즉, 전체적으로 리렌더링 된다.
+    // 클래스 컴포넌트는 render 부분만 리렌더링 되는것에 비해 Hooks는 클래스 안에 함수도 재생성/재실행 되므로,
+    // 기본적으로는 클래스형 컴포넌트보다 성능이 느릴 수 있다.
+    console.log('렌더링');
+
+    return (
+        <React.Fragment>
+            <div>{first} 곱하기 {second} 는?</div>
+            <form onSubmit={onSubmitForm}>
+                <input type="number" ref={inputRef} value={value} onChange={onChangeInput} />
+                <button type="submit">입력</button>
+            </form>
+            <div>{result}</div>
+        </React.Fragment>
+    );
+};
+</script>
+<!-- [T] 참고용 -->
+<!-- script type="text/babel">
+const GuGuDan = () => {
+    // 클래스 컴포넌트 패턴의 state 처럼 선언은 할 수 있다.
+    // 문제는 setState를 사용할 경우 개별로 state 변경이 귀찮아지기 때문에 비효율적이다.
+    const [state, setState] = React.useState({
+        first: Math.ceil(Math.random() * 9),
+        second: Math.ceil(Math.random() * 9),
+        value: '',
+        result: ''
+    });
+
+    const inputRef = React.useRef(null); // ref
+
+    const onSubmitForm = (e) => {
+        e.preventDefault();
+
+        if (parseInt(state.value, 10) === state.first * state.second) {
+            setState({
+                first: Math.ceil(Math.random() * 9),
+                second: Math.ceil(Math.random() * 9),
+                value: '',
+                result: `${prevState.value} 정답 입니다.`
+            });
+
+            inputRef.current.focus();
+        } else {
+            setState({
+                value: '',
+                result: '오답 입니다.'
+            });
+
+            inputRef.current.focus();
+        }
+    };
+
+    const onChangeInput = (e) => {
+        setState({
+            second: e.target.value
+        });
+    };
+
+    return (
+        <React.Fragment>
+            <div>{state.first} 곱하기 {state.second} 는?</div>
+            <form onSubmit={onSubmitForm}>
+                <input type="number" ref={inputRef} value={state.value} onChange={onChangeInput} />
+                <button type="submit">입력</button>
+            </form>
+            <div>{result}</div>
+        </React.Fragment>
+    );
+};
+</script -->
+<script type="text/babel">
+'use strict';
+
+ReactDOM.render(
+    <GuGuDan />,
+    document.querySelector('#root')
+);
+</script>
+</body>
+</html>

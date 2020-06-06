@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>리액트 네이티브 기초</title>
+<!-- [API] https://ko.reactjs.org/docs/cdn-links.html -->
+<!-- [I] react: React가 동작하는 핵심적인 자바스크립트의 역할 -->
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<!-- [I] react-dom: React 코드를 웹에다가 붙여주는 역할 -->
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+<!-- [I] 실제 개발 배포시 react.production 자바스크립트로 변경해야 함
+<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+-->
+</head>
+<body>
+<div id="root"></div>
+<!--
+output:
+<div id="root">
+    <button>Like</button>
+</div>
+-->
+
+<script>
+'use strict';
+
+/** 클래스 컴포넌트 기본 구조 */
+// class ClassName extends React.Component {
+//     render() {
+//         return (<div>Hello, 클래스 컴포넌트</div>);
+//     }
+// }
+
+// 리액트 엘리먼트 생성.
+// 네이티브 자바스트립트의 `document.createElement()` 라고 생각하면 됨.
+class LikeButton extends React.Component {
+    constructor(props) {
+        super(props);
+
+        // 변경될 여지가 있는 부분이 상태(state) 이다.
+        this.state = {
+            liked: false
+        };
+    }
+
+    render() {
+        /** [T] 스텝1 */
+        // return React.createElement('button', null, 'Like'); // result: <button>Like</button>
+
+        /** [T] 스텝2 */
+        // return React.createElement('button', { type: 'button', onClick: () => { alert('clicked'); }}, 'Like'); // result: <button type="button" onclick="() => { alert('clicked'); }">Like</button>
+
+        /** [T] 스텝3 */
+        // 크롬 리액트 확장 프로그램으로 설치 후 state 확인 "React Developer Tools"
+        // https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=ko
+        // return React.createElement('button', { type: 'button', onClick: () => { this.setState({liked: true}) }}, 'Like');
+
+        /** [T] 스텝4 */
+        // state 값에 따라 화면이 자동으로 변경
+        // $('button').text('Like'); // 기존 jQuery 사용 시
+       return React.createElement(
+            'button',
+            {
+                type: 'button',
+                onClick: () => { this.setState({liked: !this.state.liked}) }
+            },
+            (this.state.liked) ? 'Liked' : 'Like'
+        );
+    }
+}
+</script>
+<script>
+'use strict';
+
+// 실제 뷰 화면에 렌더링
+ReactDOM.render(
+    React.createElement(LikeButton),
+    document.querySelector('#root')
+);
+</script>
+</body>
+</html>

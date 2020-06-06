@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>리액트 네이티브 구구단 예제</title>
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+'use strict';
+
+class GuGuDan extends React.Component {
+    // constructor(props) {
+    //     super(props);
+    //
+    //     this.state = {
+    //         first: Math.ceil(Math.random() * 9),
+    //         second: Math.ceil(Math.random() * 9),
+    //         value: '',
+    //         result: ''
+    //     };
+    // }
+
+    // constructor 생략할 경우 this를 빼고 state 사용
+    state = {
+        first: Math.ceil(Math.random() * 9),
+        second: Math.ceil(Math.random() * 9),
+        value: '',
+        result: ''
+    };
+
+    inputRef = null; // ref
+
+    onSubmit = (e) => {
+        e.preventDefault();
+
+        if (parseInt(this.state.value, 10) === this.state.first * this.state.second) {
+            // this.setState({
+            //     first: Math.ceil(Math.random() * 9),
+            //     second: Math.ceil(Math.random() * 9),
+            //     value: '',
+            //     result: this.state.value + ' 정답 입니다.'
+            // });
+
+            /** [참고용] setState의 이해 */
+            // `setState()` 는 비동기 함수이다.
+            // this.setState({
+            //     value: this.state.value + 1
+            // });
+            // this.setState({
+            //     value: this.state.value + 1
+            // });
+            // this.setState({
+            //     value: this.state.value + 1
+            // });
+            // 기대결과: 새로운 value가 기존 value + 3
+            // 실제결과: 새로운 value가 기존 value + 1 될 수 있다.
+
+            /** 비동기 결과 이슈 대응 */
+            // setState() 메서드 API에서 제공하는 콜백함수를 사용하면 된다.
+            // 콜백함수 패턴은 prevState 인자로 접근할 수 있어서 코드 가독성이 좋은 장점도 가지고 있다.
+            // 이전 state를 새로운 state를 만들어내는 경우 사용
+            this.setState((prevState) => {
+                return {
+                    first: Math.ceil(Math.random() * 9),
+                    second: Math.ceil(Math.random() * 9),
+                    value: '',
+                    result: `${prevState.value} 정답 입니다.`
+                }
+            });
+
+            this.inputRef.focus(); // ref 속성으로 선언된 this.inputRef 엘리먼트에 접근
+        } else {
+            // 이전 state를 새로운 state를 만들어내는 경우가 아니면 일반적으로 사용
+            this.setState({
+                value: '',
+                result: '오답 입니다.'
+            });
+
+            this.input.focus(); // ref 속성으로 선언된 this.inputRef 엘리먼트에 접근
+        }
+    };
+
+    render() {
+        // state가 변경 될 때 마다 render() 함수가 리렌더링 된다.
+        // 리렌더링이 발생될때 마다 return 구문안에 input 같이 내장 이벤트 핸들러가 있을 경우 함수가 계속 재생성/재실행 되므로,
+        // form의 onSubmit 메서드처럼 클래스 메서드로 만들어 놓고 사용하는 것이 성능 이점이 좋다.
+        console.log('렌더링');
+
+        /** [T] 실용 예제 */
+        return (
+            // Fragment 사용 시 불필요한 감싸는 root용 div 태그 렌더링을 막을 수 있다
+            <React.Fragment>
+                <div>{this.state.first} 곱하기 {this.state.second} 는?</div>
+                <form onSubmit={this.onSubmit}>
+                    {/** 스텝1 */}
+                    {/* 콘솔창에 에러가 뜨고 입력창에 입력이 되지 않는데 그 이유는 기본 state 값이 빈 문자열('') 이기 때문이다. */}
+                    {/* <input type="number" value={this.state.value} /> *}
+
+                    {/** 스텝2 */}
+                    {/* DOM에 직접 접근하고 싶으면 ref 속성을 사용 */}
+                    <input type="number" ref={(c) => { this.inputRef = c; }} value={this.state.value} onChange={(e) => this.setState({value: e.target.value})} />
+                    <button type="submit">입력</button>
+                </form>
+                <div>{this.state.result}</div>
+            </React.Fragment>
+        );
+    }
+}
+</script>
+<script type="text/babel">
+'use strict';
+
+ReactDOM.render(
+    <GuGuDan />,
+    document.querySelector('#root')
+);
+
+// 다중 컴포넌트 사용 시 별개의 state를 사용하기 때문에 중복되지 않는다.
+// ReactDOM.render(
+//     <div>
+//         <GuGuDan />
+//         <GuGuDan />
+//         <GuGuDan />
+//     </div>,
+//     document.querySelector('#root')
+// );
+</script>
+</body>
+</html>
