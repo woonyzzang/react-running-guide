@@ -23,4 +23,4 @@
 - [React Motion 가이드](./react-animate/README.md)
 
 ## 7. 리액트 ESLint Prettier
-- [React Motion 가이드](./react-eslint-prettier/README.md)
+- [React Prettier 가이드](./react-eslint-prettier/README.md)
