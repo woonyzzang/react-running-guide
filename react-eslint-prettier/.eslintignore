@@ -1,0 +1,8 @@
+/build
+/dist
+/node_modules
+
+src/serviceWorker.js
+src/**.test.js
+
+README.md
